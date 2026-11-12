@@ -41,7 +41,7 @@ Each bid also carries:
 
 | Constant | Default | Meaning |
 | --- | --- | --- |
-| `INCLUDE_TIER_3` | `False` | emit the widest (tier-3) matches, or hold them |
+| `INCLUDE_TIER_3` | `True`  | emit the widest (tier-3) matches, or hold them |
 | `FIRST_RUN_DAYS` | `7` | how far back the very first run (no cursor) looks |
 | `MAX_PAGES` | `12` | page cap per feed, so a run stays inside the time limit |
 

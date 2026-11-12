@@ -26,7 +26,7 @@ import re
 from tommos_module import ContractError, a_bid, a_date, a_key, fetch, log, the_cursor
 
 # ----------------------------------------------------------------------------- knobs
-INCLUDE_TIER_3 = False      # tier 3 = widest match (testing only a line item in a non-IT buy)
+INCLUDE_TIER_3 = True       # tier 3 = widest match; emitted, Tommo Bids triages it downstream
 FIRST_RUN_DAYS = 7          # how far back the very first run looks (no cursor yet)
 MAX_PAGES = 12              # page cap per feed, so one run stays inside the time limit
 
