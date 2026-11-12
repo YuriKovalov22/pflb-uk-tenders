@@ -1,0 +1,10 @@
+{
+  "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-05T08:00:00Z&updatedTo=2026-11-12T08:00:00Z": {
+    "status": 200,
+    "file": "fts-page.json"
+  },
+  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-05&publishedTo=2026-11-12&size=100": {
+    "status": 200,
+    "file": "cf-page.json"
+  }
+}

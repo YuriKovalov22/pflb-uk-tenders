@@ -1,0 +1,53 @@
+{
+  "records": [
+    {
+      "source": "find-a-tender",
+      "key": "ocds-h6vhtk-06857b",
+      "matched": "CPV 72254 software testing, or an IT/software procurement calling for software testing; testing is a line item, not the main subject: «• User acceptance testing support.»",
+      "title": "Electronic Committee Management System (ECMS).",
+      "buyer": {
+        "name": "Caerphilly County Borough Council"
+      },
+      "source_url": "https://www.find-tender.service.gov.uk/procurement/ocds-h6vhtk-06857b",
+      "country": "GB",
+      "posted_date": "2026-11-10",
+      "due_date": "2026-12-11",
+      "summary": "Caerphilly County Borough Council invites tenders for the provision, implementation, support and maintenance of a comprehensive Electronic Committee Management System (ECMS).",
+      "description": "Caerphilly County Borough Council invites tenders for the provision, implementation, support and maintenance of a comprehensive Electronic Committee Management System (ECMS).\nThe Council requires a modern, secure, cloud-hosted solution to support the administration and governance of democratic services and committee management activities. The solution must facilitate the efficient creation, management, publication and archiving of committee agendas, reports, minutes, decisions and associated meeting documentation.\nThe Council requires a fully bilingual (English and Welsh) system that supports the needs of elected Members, officers and the public whilst ensuring compliance with Welsh Language Standards, accessibility requirements, data protection legislation and recognised security standards.\nThe solution should provide functionality including, but not limited to:\n•\tCommittee, meeting and calendar management.\n•\tAgenda, report and minutes production workflows.\n•\tDecision and action tracking.\n•\tPublic-facing committee information and publication portal.\n•\tSecure Member and officer access via desktop, tablet and mobile devices.\n•\tBilingual content management and publication.\n•\tElectronic distribution of meeting papers.\n•\tMeeting attendance and voting management.\n•\tDocument storage, search and retrieval functionality.\n•\tIntegration with Microsoft 365 and other relevant Council systems.\n•\tRole-based access controls and audit reporting.\n•\tManagement information and performance reporting.\nThe successful supplier will be responsible for:\n•\tSolution provisioning and implementation.\n•\tSystem configuration and data migration where required.\n•\tUser acceptance testing support.\n•\tTraining for system administrators, officers and elected Members.\n•\tOngoing software maintenance, upgrades and technical support.\nFull details can be found in the ITT (Tender Pack)",
+      "cpv": [
+        "48000000",
+        "72000000",
+        "75110000"
+      ],
+      "opp_type": "Open",
+      "value_estimate": {
+        "low": 200000.0,
+        "high": 200000.0,
+        "currency": "GBP"
+      }
+    },
+    {
+      "source": "contracts-finder",
+      "key": "ocds-b5fd17-bb359a77-8892-420d-bc9d-a65b8b36bb3d",
+      "matched": "CPV 72254 software testing, or an IT/software procurement calling for software testing: «The outcome of the tender shall see the Home Office award 2 Call-Off Contracts to two different suppliers to provide quality assurance, quality engineering and testing services for applications and systems acro…",
+      "title": "Home Office Core Testing Capability Services (Lots 1 & 2)",
+      "buyer": {
+        "name": "Home Office"
+      },
+      "source_url": "https://www.contractsfinder.service.gov.uk/Notice/bb359a77-8892-420d-bc9d-a65b8b36bb3d",
+      "country": "GB",
+      "posted_date": "2026-11-11",
+      "due_date": "2026-12-21",
+      "summary": "Each contract will support a distinct set of service areas/portfolios within the Home Office, and shall include the provision of resource augmentation and managed services.",
+      "description": "The Home Office is conducting a mini-competition via the GCA&apos;s Quality Assurance & Testing for IT Systems 2 DPS, RM6148.\r\n\r\nThe outcome of the tender shall see the Home Office award 2 Call-Off Contracts to two different suppliers to provide quality assurance, quality engineering and testing services for applications and systems across the Home Office. \r\n\r\nEach contract will support a distinct set of service areas/portfolios within the Home Office, and shall include the provision of resource augmentation and managed services.\r\n\r\nEach contract will have a maximum value of £150m with an initial duration of 3 years, and a further extension option of 1-year.\r\n\r\nThe contract value does not indicate a level of committed spend, as all services shall be commissioned via Statements of Work under the contract, setting our deliverables, team profiles, and the applicable charging/payment method. \r\n\r\nFor instructions on how to access the tender documents, please refer to the Joining Instructions that are attached to this Notice.",
+      "cpv": [
+        "72254100"
+      ],
+      "opp_type": "Framework / DPS (the value is a ceiling across suppliers, not one contract)"
+    }
+  ],
+  "cursor": {
+    "fts": "2026-11-12T08:00:00Z",
+    "cf": "2026-11-12"
+  }
+}

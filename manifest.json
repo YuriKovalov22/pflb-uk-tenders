@@ -1,0 +1,16 @@
+{
+  "manifest_version": 1,
+  "name": "pflb-uk-tenders",
+  "title": "UK tenders — software testing / QA / performance",
+  "about": "Open UK public tenders for software testing, QA, performance/load testing and data masking, from Find a Tender and Contracts Finder (official OCDS feeds). A rules-only sieve on CPV code and wording; no model, no key.",
+  "kind": "bid",
+  "contract": { "version": 1 },
+  "entry": "find.py",
+  "sdk": { "version": "0.1.0" },
+  "schedule": { "every_minutes": 1440 },
+  "secrets": [],
+  "hosts": ["www.find-tender.service.gov.uk", "www.contractsfinder.service.gov.uk"],
+  "time_limit_seconds": 120,
+  "record_sources": ["find-a-tender", "contracts-finder"],
+  "max_model_calls_per_run": 0
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pflb-uk-tenders",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tommos-module check . --entry find.py"
+  },
+  "dependencies": {
+    "@tommos/module-sdk": "github:TommosCRM/tommos-module-sdk#v0.1.0"
+  }
+}

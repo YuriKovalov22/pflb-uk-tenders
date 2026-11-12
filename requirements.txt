@@ -1,0 +1,1 @@
+tommos-module-sdk @ git+https://github.com/TommosCRM/tommos-module-sdk@v0.1.0#subdirectory=python
