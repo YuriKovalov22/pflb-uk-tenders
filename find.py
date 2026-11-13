@@ -266,6 +266,31 @@ def notice_url(source, ocid):
     return NOTICE_URL[source].format(ocid=ocid, guid=guid)
 
 
+def _cf_notice_url(rel):
+    # Contracts Finder's public /Notice/ page uses a DIFFERENT guid from the one
+    # inside the OCID: the real link sits in tender.documents, and equals the
+    # release id (<uuid>-<serial>, strip the serial). The OCID-guid form 404s.
+    t = rel.get("tender") or {}
+    for doc in (t.get("documents") or []):
+        u = doc.get("url") or ""
+        if "/Notice/" in u and "/Attachment/" not in u:
+            return u.split("?")[0]
+    rid = rel.get("id") or ""
+    m = re.match(r"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-"
+                 r"[0-9a-fA-F]{4}-[0-9a-fA-F]{12})(?:-\d+)?$", rid)
+    if m:
+        return f"https://www.contractsfinder.service.gov.uk/Notice/{m.group(1)}"
+    return None
+
+
+def record_url(source, ocid, rel):
+    if source == "contracts-finder":
+        u = _cf_notice_url(rel)
+        if u:
+            return u
+    return notice_url(source, ocid)
+
+
 def classify(r, source):
     """Apply the sieve to one OCDS release. Returns an internal dict, or None if not ours."""
     t = r.get("tender") or {}
@@ -310,6 +335,7 @@ def classify(r, source):
         "tier": tier,
         "borderline": not gold_main and not TITLE_TESTING.search(title),
         "ocid": r.get("ocid") or "",
+        "source_url": record_url(source, r.get("ocid") or "", r),
         "date": r.get("date"),
         "stage": stage_of(r, t),
         "buyer": resolve_buyer(r),
@@ -355,7 +381,7 @@ def _to_bid(row, source):
         matched=_matched(row),
         title=row["title"] or "(untitled notice)",
         buyer={"name": row["buyer"] or "Unknown buyer"},
-        source_url=notice_url(source, row["ocid"]),
+        source_url=row.get("source_url") or notice_url(source, row["ocid"]),
         country="GB",
         posted_date=row.get("date"),
         due_date=row.get("deadline"),
