@@ -403,14 +403,29 @@ def _json(answer):
 
 
 def _pull(url, source, now_day, records, seen):
-    """Page a feed from `url`, classify each release, append bids. Returns (scanned, on_theme)."""
+    """Page a feed from `url`, classify each release, append bids.
+
+    Returns (scanned, on_theme, complete). `complete` is False when the window was NOT
+    read to its end -- the feed errored, its answer could not be read, or the page cap
+    cut the paging short. The caller must then leave that source's cursor where it was,
+    so the unread window is read again next run instead of being skipped for good.
+    """
     scanned = on_theme = pages = 0
+    complete = True
     while url and pages < MAX_PAGES:
         answer = fetch(url)
         if not answer.ok:
-            log.warning(f"{source}: the feed answered {answer.status}; kept what came before")
+            log.warning(f"{source}: the feed answered {answer.status}; the window stays open "
+                        f"and will be read again next run")
+            complete = False
             break
-        data = _json(answer)
+        try:
+            data = _json(answer)
+        except Exception as e:
+            log.warning(f"{source}: the answer could not be read ({type(e).__name__}); the window "
+                        f"stays open and will be read again next run")
+            complete = False
+            break
         releases = data.get("releases") or []
         pages += 1
         for rel in releases:
@@ -436,7 +451,12 @@ def _pull(url, source, now_day, records, seen):
                 records.append(e.record)
             seen.add(row["ocid"])
         url = (data.get("links") or {}).get("next")
-    return scanned, on_theme
+    if url:
+        # Still a next page when the loop stopped: the cap cut the window short.
+        log.warning(f"{source}: stopped at the {MAX_PAGES}-page cap with more still to read; "
+                    f"the window stays open and will be read again next run")
+        complete = False
+    return scanned, on_theme, complete
 
 
 def find(context):
@@ -448,16 +468,28 @@ def find(context):
     # Find a Tender — incremental by last-updated time.
     fts_from = cursor.get("fts") or _days_before(now, FIRST_RUN_DAYS)
     fts_url = f"{FTS_API}?updatedFrom={fts_from}&updatedTo={now}"
-    fts_scanned, fts_theme = _pull(fts_url, "find-a-tender", now_day, records, seen)
-    log.read(f"Find a Tender, updated {fts_from[:10]}..{now_day} ({fts_theme} on-theme)", fts_scanned)
+    fts_scanned, fts_theme, fts_ok = _pull(fts_url, "find-a-tender", now_day, records, seen)
+    log.read(f"Find a Tender, updated {fts_from[:10]}..{now_day} ({fts_theme} on-theme"
+             f"{'' if fts_ok else ', READ INCOMPLETE'})", fts_scanned)
 
     # Contracts Finder — by published date (whole-day granularity).
     cf_from = cursor.get("cf") or now_day_minus(now_day, FIRST_RUN_DAYS)
     cf_url = f"{CF_API}?publishedFrom={cf_from}&publishedTo={now_day}&size=100"
-    cf_scanned, cf_theme = _pull(cf_url, "contracts-finder", now_day, records, seen)
-    log.read(f"Contracts Finder, published {cf_from}..{now_day} ({cf_theme} on-theme)", cf_scanned)
+    cf_scanned, cf_theme, cf_ok = _pull(cf_url, "contracts-finder", now_day, records, seen)
+    log.read(f"Contracts Finder, published {cf_from}..{now_day} ({cf_theme} on-theme"
+             f"{'' if cf_ok else ', READ INCOMPLETE'})", cf_scanned)
 
-    return {"records": records, "cursor": {"fts": now, "cf": now_day}}
+    # The cursor moves ONLY for a feed that was read to the end. A feed that errored, answered
+    # something unreadable, or was cut by the page cap keeps its old mark, so its window is read
+    # again next run. Before 2026-11-16 the cursor jumped to `now` whatever happened: one failed
+    # read silently skipped that window for good, and the run still looked like a quiet day with
+    # "0 found". A failed source must never be indistinguishable from an empty one.
+    moved = dict(cursor)
+    if fts_ok:
+        moved["fts"] = now
+    if cf_ok:
+        moved["cf"] = now_day
+    return {"records": records, "cursor": moved}
 
 
 def _days_before(iso, days):
