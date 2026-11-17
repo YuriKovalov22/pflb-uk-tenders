@@ -8,7 +8,8 @@ One module, two official OCDS feeds, one sieve:
       https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search  (publishedFrom/publishedTo)
 
 Both answer OCDS JSON (releases[] + links.next) and are read straight through `fetch` — no
-browser, no key, no AI. The sieve is pure rules (CPV code + wording, with vetoes), so a run is
+browser, no key, no AI. Each is asked for one procurement stage at a time (tender, then
+planning), so a run reads the open opportunities instead of the whole day's traffic. The sieve is pure rules (CPV code + wording, with vetoes), so a run is
 deterministic and costs nothing.
 
 THE SIEVE (unchanged from the pond engine):
@@ -23,12 +24,32 @@ A bid carries the sentence that says what must be done (summary), the full notic
 and the rule that took it with its evidence quote (matched). Tommo Bids triages it from there.
 """
 import re
+import time
 from tommos_module import ContractError, a_bid, a_date, a_key, fetch, log, the_cursor
 
 # ----------------------------------------------------------------------------- knobs
 INCLUDE_TIER_3 = True       # tier 3 = widest match; emitted, Tommo Bids triages it downstream
 FIRST_RUN_DAYS = 7          # how far back the very first run looks (no cursor yet)
 MAX_PAGES = 12              # page cap per feed, so one run stays inside the time limit
+
+# Both feeds answer every notice updated in the window -- awards, amendments, contract
+# records, the lot. The sieve then throws away everything that is not an open opportunity,
+# so a whole day of Find a Tender arrived as 664 releases over 7 pages to keep 12 of them.
+# Asking the feed for the stages we actually want turns that into one page of 12 in under
+# two seconds (measured 2026-11-17). The two feeds take ONE stage per call -- a repeated
+# or comma-joined `stages` keeps only the last -- so each feed is read once per stage.
+STAGES = ("tender", "planning")
+
+# Tommos ends a run at 120 s. Find a Tender can be slow (17-31 s a page, and on a bad day
+# it does not answer at all), and the SDK's own retrying would spend 90 s on a single page
+# before giving up -- which is exactly how the 17 Nov 08:00 run died with "Out of time"
+# and nothing read. So: one try per page, a timeout that never outlives the budget, and a
+# wall clock that stops the paging in time for the other feed to be read at all. A window
+# cut short this way is INCOMPLETE -- its cursor stays put and it is read again next run.
+RUN_BUDGET_S = 100          # wall clock the whole run may spend fetching
+FTS_SHARE = 0.6             # of it, at most this much goes to Find a Tender
+PAGE_TIMEOUT_S = 35         # longest wait for one page
+MIN_PAGE_S = 5              # do not start a page with less time left than this
 
 FTS_API = "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages"
 CF_API = "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search"
@@ -402,7 +423,7 @@ def _json(answer):
     return json.loads(answer.text(), strict=False)
 
 
-def _pull(url, source, now_day, records, seen):
+def _pull(url, source, now_day, records, seen, deadline):
     """Page a feed from `url`, classify each release, append bids.
 
     Returns (scanned, on_theme, complete). `complete` is False when the window was NOT
@@ -413,7 +434,19 @@ def _pull(url, source, now_day, records, seen):
     scanned = on_theme = pages = 0
     complete = True
     while url and pages < MAX_PAGES:
-        answer = fetch(url)
+        left = deadline - time.monotonic()
+        if left < MIN_PAGE_S:
+            log.warning(f"{source}: the run's time ran out with more still to read; the window "
+                        f"stays open and will be read again next run")
+            complete = False
+            break
+        try:
+            answer = fetch(url, tries=1, timeout_s=max(1, int(min(PAGE_TIMEOUT_S, left))))
+        except Exception as e:
+            log.warning(f"{source}: the feed could not be reached ({type(e).__name__}); the window "
+                        f"stays open and will be read again next run")
+            complete = False
+            break
         if not answer.ok:
             log.warning(f"{source}: the feed answered {answer.status}; the window stays open "
                         f"and will be read again next run")
@@ -465,17 +498,33 @@ def find(context):
     cursor = the_cursor(context, {}) or {}
     records, seen = [], set()
 
-    # Find a Tender — incremental by last-updated time.
+    started = time.monotonic()
+    fts_deadline = started + RUN_BUDGET_S * FTS_SHARE
+    cf_deadline = started + RUN_BUDGET_S
+
+    # Find a Tender — incremental by last-updated time, one call per stage.
     fts_from = cursor.get("fts") or _days_before(now, FIRST_RUN_DAYS)
-    fts_url = f"{FTS_API}?updatedFrom={fts_from}&updatedTo={now}"
-    fts_scanned, fts_theme, fts_ok = _pull(fts_url, "find-a-tender", now_day, records, seen)
+    fts_scanned = fts_theme = 0
+    fts_ok = True
+    for stage in STAGES:
+        url = f"{FTS_API}?updatedFrom={fts_from}&updatedTo={now}&stages={stage}"
+        scanned, theme, ok = _pull(url, "find-a-tender", now_day, records, seen, fts_deadline)
+        fts_scanned += scanned
+        fts_theme += theme
+        fts_ok = fts_ok and ok
     log.read(f"Find a Tender, updated {fts_from[:10]}..{now_day} ({fts_theme} on-theme"
              f"{'' if fts_ok else ', READ INCOMPLETE'})", fts_scanned)
 
-    # Contracts Finder — by published date (whole-day granularity).
+    # Contracts Finder — by published date (whole-day granularity), one call per stage.
     cf_from = cursor.get("cf") or now_day_minus(now_day, FIRST_RUN_DAYS)
-    cf_url = f"{CF_API}?publishedFrom={cf_from}&publishedTo={now_day}&size=100"
-    cf_scanned, cf_theme, cf_ok = _pull(cf_url, "contracts-finder", now_day, records, seen)
+    cf_scanned = cf_theme = 0
+    cf_ok = True
+    for stage in STAGES:
+        url = f"{CF_API}?publishedFrom={cf_from}&publishedTo={now_day}&size=100&stages={stage}"
+        scanned, theme, ok = _pull(url, "contracts-finder", now_day, records, seen, cf_deadline)
+        cf_scanned += scanned
+        cf_theme += theme
+        cf_ok = cf_ok and ok
     log.read(f"Contracts Finder, published {cf_from}..{now_day} ({cf_theme} on-theme"
              f"{'' if cf_ok else ', READ INCOMPLETE'})", cf_scanned)
 
