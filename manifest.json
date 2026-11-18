@@ -6,7 +6,7 @@
   "kind": "bid",
   "contract": { "version": 1 },
   "entry": "find.py",
-  "sdk": { "version": "0.1.0" },
+  "sdk": { "version": "0.2.0" },
   "schedule": { "every_minutes": 1440 },
   "secrets": [],
   "hosts": ["www.find-tender.service.gov.uk", "www.contractsfinder.service.gov.uk"],
