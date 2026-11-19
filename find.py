@@ -57,7 +57,11 @@ STAGES = ("planning", "tender")
 RUN_BUDGET_S = 100          # wall clock the whole run may spend fetching
 FTS_SHARE = 0.85            # of it, at most this much goes to Find a Tender
 PAGE_TIMEOUT_S = 40         # longest wait for one page
-PAGE_TRIES = 3              # attempts at the SAME page, while the budget allows
+# One attempt per page, on purpose. The Find a Tender team asked us not to retry straight after a
+# timeout but to wait a few minutes (Philip Wong, ticket 0037632, 19.11.2026), and a run that must
+# end inside 120 s has no few minutes to wait. So a page that fails is simply not read now: the
+# day-by-day cursor leaves that window open and the next run reads it. The tools already space
+# calls to one host by 500 ms, which is the other half of what they asked for.
 MIN_PAGE_S = 6              # do not start a page with less time left than this
 
 # Contracts Finder answers in under a second, so it needs almost none of the budget;
@@ -437,6 +441,20 @@ def _json(answer):
     return json.loads(answer.text(), strict=False)
 
 
+def _why_in_words(why):
+    """A page that did not arrive, said so a reader knows whether we were refused or ignored."""
+    t = (why or "").lower()
+    if "429" in t:
+        return ("the feed asked us to slow down (429); we stop rather than press it, and read "
+                "no faster next run")
+    if "answered 5" in t:
+        return f"the feed is unwell and answered an error of its own ({why})"
+    if "did not answer" in t:
+        return ("the feed did not answer this page in time; it is not asked again now, because "
+                "the service asks that a timeout be left alone for a few minutes")
+    return f"this page could not be read ({why})"
+
+
 def _pull(url, source, now_day, records, seen, deadline):
     """Page a feed from `url`, classify each release, append bids.
 
@@ -456,20 +474,13 @@ def _pull(url, source, now_day, records, seen, deadline):
             complete = False
             stopped_early = True
             break
-        answer, why = None, "no attempt had time to run"
-        for attempt in range(PAGE_TRIES):
-            left = deadline - time.monotonic()
-            if left < MIN_PAGE_S:
-                break
-            try:
-                answer = fetch(url, tries=1, timeout_s=max(1, int(min(PAGE_TIMEOUT_S, left))))
-                break
-            except Exception as e:
-                why = f"{type(e).__name__}: {e}"[:140]
-                answer = None
+        try:
+            answer = fetch(url, tries=1, timeout_s=max(1, int(min(PAGE_TIMEOUT_S, left))))
+        except Exception as e:
+            answer, why = None, f"{type(e).__name__}: {e}"[:140]
         if answer is None:
-            log.warning(f"{source}: the feed did not answer this page after {PAGE_TRIES} tries "
-                        f"({why}); the window stays open and will be read again next run")
+            log.warning(f"{source}: {_why_in_words(why)}; the window stays open and will be "
+                        f"read again next run")
             complete = False
             stopped_early = True
             break
