@@ -69,6 +69,16 @@ FTS_NO_STAGES = True
 # A later version, once the catch-up is done, can drop this to a plain "a week back".
 FTS_READ_FROM = "2026-11-10T00:00:00Z"
 
+# Contracts Finder is re-read from the same day, for a different reason: until this version a
+# day it answered with nothing at all was marked read, and the service answers an empty but
+# perfectly well-formed envelope now and then (see _the_feed_is_answering). Any day it did
+# that on is a day of notices nobody ever saw. Ten days is the span this module has been
+# running, so the re-read covers all of it. Its cursor key is new ("cf2") for that reason.
+CF_READ_FROM = "2026-11-10"
+
+PROBE_DAYS = 7              # width of the liveness window -- a UK week is never truly empty
+PROBE_TIMEOUT_S = 30        # a liveness check is not worth a long wait
+
 PAGE_LIMIT = 100            # the most either feed gives on one page (500 answers HTTP 400)
 
 # Tommos allows a run up to 200 s, and this module asks for all of it (Yuri, 20.11.2026:
@@ -509,6 +519,43 @@ def _why_in_words(why):
     return f"this page could not be read ({why})"
 
 
+def _the_feed_is_answering(source, day, deadline):
+    """Ask the feed for the week before `day` and say whether anything came back.
+
+    A feed can answer an empty but perfectly well-formed package when nothing at all is wrong
+    with the request. Measured on Contracts Finder, 20 November 2026: it answered an empty
+    package for every day from the 13th to the 20th, and a minute later the very same URL for
+    the 19th returned thirteen notices. An empty answer is therefore NOT proof of a quiet day,
+    and a day marked read on that proof is a day of notices lost without a word.
+
+    A genuinely quiet day does exist -- Contracts Finder publishes nothing on a Sunday
+    (measured: 15 November, both stages, nothing). So the two cases are told apart by asking
+    for something that cannot honestly be empty: a whole week, no stage filter. If that comes
+    back holding a release, the feed is answering and the quiet day is real. If it comes back
+    empty, or does not come back at all, the feed is not to be believed at this moment and the
+    day is left unread for the next run.
+    """
+    start = now_day_minus(day, PROBE_DAYS)
+    if source == "find-a-tender":
+        url = f"{FTS_API}?updatedFrom={start}T00:00:00Z&updatedTo={day}T00:00:00Z&limit=1"
+    else:
+        url = f"{CF_API}?publishedFrom={start}&publishedTo={day}&size={PAGE_LIMIT}"
+    left = deadline - time.monotonic()
+    if left < MIN_PAGE_S:
+        return False            # no time to check means no right to believe the empty answer
+    try:
+        answer = _fetch_bounded(url, min(PROBE_TIMEOUT_S, left))
+    except Exception:           # noqa: BLE001 -- any failure means "not proven answering"
+        return False
+    if answer is None or not answer.ok:
+        return False
+    try:
+        data = _json(answer)
+    except Exception:           # noqa: BLE001
+        return False
+    return bool(data.get("releases"))
+
+
 def _pull(url, source, now_day, records, seen, deadline):
     """Page a feed from `url`, classify each release, append bids.
 
@@ -611,7 +658,11 @@ def find(context):
     # broken filter, and those days have to be read again. FTS_READ_FROM is where that
     # re-reading starts; it is deliberately a day earlier than this module's first ever run.
     fts = dict(cursor.get("fts2") or {})
-    fts_from = fts.get("through") or FTS_READ_FROM
+    # No new-style mark yet: an installation upgrading from an older version (it has the old
+    # "fts" mark) re-reads from FTS_READ_FROM, because its old mark stands at days read through
+    # the broken filter. A brand-new installation has nothing to make good and just reads a week.
+    fts_from = fts.get("through") or (FTS_READ_FROM if cursor.get("fts")
+                                      else _days_before(now, FIRST_RUN_DAYS))
     carried = fts.get("next")       # a page left half way through the first day, from last run
     fts_floor = _days_before(now, MAX_LOOKBACK_DAYS)
     if fts_from < fts_floor:
@@ -650,6 +701,13 @@ def find(context):
                 log.warning("find-a-tender: the page carried over from the last run failed "
                             "again, so it is dropped and this day is read afresh next run")
             break
+        if scanned == 0 and not _the_feed_is_answering("find-a-tender", a[:10], fts_deadline):
+            log.warning(f"find-a-tender: the feed answered {a[:10]} with nothing at all, and the "
+                        f"week before it came back empty too, so the feed -- not the day -- is "
+                        f"quiet. That day is NOT marked read and is read again next run")
+            fts_ok = False
+            fts_left = None
+            break
         fts_through = b
     log.read(f"Find a Tender, updated {fts_from[:10]}..{fts_through[:10]}"
              f"{' (carried on from the page the last run stopped at)' if resumed else ''}"
@@ -660,7 +718,8 @@ def find(context):
 
     # Contracts Finder, read the same way, by published date. Its publishedTo is EXCLUSIVE
     # (from=16 to=16 answers nothing, from=16 to=17 answers the 16th), so a day is [d, d+1).
-    cf_from = cursor.get("cf") or now_day_minus(now_day, FIRST_RUN_DAYS)
+    cf_from = cursor.get("cf2") or (CF_READ_FROM if cursor.get("cf")
+                                    else now_day_minus(now_day, FIRST_RUN_DAYS))
     cf_floor = now_day_minus(now_day, MAX_LOOKBACK_DAYS)
     if cf_from < cf_floor:
         log.warning(f"contracts-finder: the window had stood open since {cf_from}; reading only from "
@@ -674,15 +733,23 @@ def find(context):
     day = cf_from
     while day <= now_day:
         day_ok = True
+        day_scanned = 0
         for stage in CF_STAGES:
             url = (f"{CF_API}?publishedFrom={day}&publishedTo={_day_after(day)}"
                    f"&size={PAGE_LIMIT}&stages={stage}")
             scanned, theme, ok, _ = _pull(url, "contracts-finder", now_day, records, seen,
                                            cf_deadline)
             cf_scanned += scanned
+            day_scanned += scanned
             cf_theme += theme
             day_ok = day_ok and ok
         if not day_ok:
+            cf_ok = False
+            break
+        if day_scanned == 0 and not _the_feed_is_answering("contracts-finder", day, cf_deadline):
+            log.warning(f"contracts-finder: the feed answered {day} with nothing at all, and the "
+                        f"week before it came back empty too, so the feed -- not the day -- is "
+                        f"quiet. That day is NOT marked read and is read again next run")
             cf_ok = False
             break
         cf_through = day
@@ -697,10 +764,12 @@ def find(context):
     # read, which was safe but meant a feed having a bad week made no progress at all. Now each
     # day read in full is kept, and the day that failed is where tomorrow starts.
     moved = dict(cursor)
+    moved.pop("fts", None)      # the old marks have done their one job -- pointing at the days
+    moved.pop("cf", None)       # that had to be read again -- and are not carried any further
     was = (cursor.get("fts2") or {}).get("through") or ""
     moved["fts2"] = {"through": max(fts_through, was), "next": fts_left}
-    if cf_through and cf_through > (cursor.get("cf") or ""):
-        moved["cf"] = cf_through
+    if cf_through and cf_through > (cursor.get("cf2") or ""):
+        moved["cf2"] = cf_through
     return {"records": records, "cursor": moved}
 
 

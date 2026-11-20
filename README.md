@@ -44,6 +44,29 @@ Each bid also carries:
 | `INCLUDE_TIER_3` | `True`  | emit the widest (tier-3) matches, or hold them |
 | `FIRST_RUN_DAYS` | `7` | how far back the very first run (no cursor) looks |
 | `MAX_PAGES` | `12` | page cap per feed, so a run stays inside the time limit |
+| `MAX_LOOKBACK_DAYS` | `30` | the furthest back a window left open by failed reads may reach |
+| `FTS_READ_FROM` / `CF_READ_FROM` | `2026-11-10` | the one-off re-reading an upgrade does (see below) |
+| `RUN_BUDGET_S` / `PAGE_TIMEOUT_S` | `175` / `90` | the run's own clock, and the longest wait for one page |
+
+## How the two feeds are read
+
+Each feed is asked **one day at a time**, and each day read in full moves that feed's mark forward,
+so a run cut short keeps what it earned. A day too large for one run is resumed on the very page it
+stopped at. Find a Tender is read **without** the `stages` filter: that filter returns only notices
+published under the old EU directives and hides almost everything published under the Procurement
+Act 2023 (measured 20 November 2026 — it hid 71 of a day's 83 open notices). Contracts Finder's
+filter of the same name is exact (measured, nothing lost, nothing extra) and is used.
+
+A day the feed answers with **nothing at all** is not believed on its own: both services return a
+well-formed but empty package now and then while nothing is wrong with the request. The module then
+asks for the whole week before that day, unfiltered. If the week holds a notice, the feed is
+answering and the quiet day is real; if the week is empty too, the day is left unread for the next
+run. A genuinely quiet day does exist — Contracts Finder publishes nothing on a Sunday.
+
+Marks are kept under the keys `fts2` and `cf2`. An installation upgrading from v0.1.7 or earlier
+(which marked its progress under `fts` / `cf`) re-reads from `FTS_READ_FROM` / `CF_READ_FROM`, so
+the notices the older versions lost come in by themselves; the old keys are then dropped. A
+brand-new installation simply reads `FIRST_RUN_DAYS` back.
 
 Only **open** and **planning** notices are emitted; awarded / complete / cancelled, and anything
 past its deadline, are skipped with a reason in the log.
