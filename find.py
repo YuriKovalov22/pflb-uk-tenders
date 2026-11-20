@@ -44,25 +44,31 @@ MAX_PAGES = 12              # page cap per feed, so one run stays inside the tim
 # Asking the feed for the stages we actually want turns that into one page of 12 in under
 # two seconds (measured 2026-11-17). The two feeds take ONE stage per call -- a repeated
 # or comma-joined `stages` keeps only the last -- so each feed is read once per stage.
-# Planning first: it is three releases and a second of work, so the cheap half of the
-# window is always read even when the expensive half eats the whole clock.
-STAGES = ("planning", "tender")
+# Tender first. Planning used to go first because it is cheap -- three releases and a
+# second of work -- but on a day when the portal is unwell every call costs the full
+# timeout, and then the cheap half ate the clock while the half that actually carries
+# open competitions was never read (the run of 20 Nov 08:00: both calls timed out, 91 s
+# spent, nothing read). The valuable stage now gets the first and longest chance.
+STAGES = ("tender", "planning")
 
-# Tommos ends a run at 120 s. Find a Tender can be slow (17-31 s a page, and on a bad day
+# Tommos allows a run up to 200 s, and this module asks for all of it (Yuri, 20.11.2026:
+# "we are not in a hurry -- one or two runs a day can wait for the host to answer"). The
+# portal is the slow party: 17-31 s for a good page, and on a bad day it does not answer
+# inside 90 s at all. Waiting is cheaper than losing a day of notices. Find a Tender can be slow (17-31 s a page, and on a bad day
 # it does not answer at all), and the SDK's own retrying would spend 90 s on a single page
 # before giving up -- which is exactly how the 17 Nov 08:00 run died with "Out of time"
 # and nothing read. So: one try per page, a timeout that never outlives the budget, and a
 # wall clock that stops the paging in time for the other feed to be read at all. A window
 # cut short this way is INCOMPLETE -- its cursor stays put and it is read again next run.
-RUN_BUDGET_S = 100          # wall clock the whole run may spend fetching
+RUN_BUDGET_S = 175          # wall clock the whole run may spend fetching
 FTS_SHARE = 0.85            # of it, at most this much goes to Find a Tender
-PAGE_TIMEOUT_S = 40         # longest wait for one page
+PAGE_TIMEOUT_S = 90         # longest wait for one page
 # One attempt per page, on purpose. The Find a Tender team asked us not to retry straight after a
 # timeout but to wait a few minutes (Philip Wong, ticket 0037632, 19.11.2026), and a run that must
 # end inside 120 s has no few minutes to wait. So a page that fails is simply not read now: the
 # day-by-day cursor leaves that window open and the next run reads it. The tools already space
 # calls to one host by 500 ms, which is the other half of what they asked for.
-MIN_PAGE_S = 6              # do not start a page with less time left than this
+MIN_PAGE_S = 10             # do not start a page with less time left than this
 
 # Contracts Finder answers in under a second, so it needs almost none of the budget;
 # Find a Tender is the slow one (28 s for a wide window on 17 Nov, and on a bad minute

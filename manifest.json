@@ -10,7 +10,7 @@
   "schedule": { "every_minutes": 1440 },
   "secrets": [],
   "hosts": ["www.find-tender.service.gov.uk", "www.contractsfinder.service.gov.uk"],
-  "time_limit_seconds": 120,
+  "time_limit_seconds": 200,
   "record_sources": ["find-a-tender", "contracts-finder"],
   "max_model_calls_per_run": 0
 }
