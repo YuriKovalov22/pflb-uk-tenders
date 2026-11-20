@@ -1,0 +1,37 @@
+{
+  "records": [
+    {
+      "source": "find-a-tender",
+      "key": "ocds-h6vhtk-06857b",
+      "matched": "CPV 72254 software testing, or an IT/software procurement calling for software testing; testing is a line item, not the main subject: «• User acceptance testing support.»",
+      "title": "Electronic Committee Management System (ECMS).",
+      "buyer": {
+        "name": "Caerphilly County Borough Council"
+      },
+      "source_url": "https://www.find-tender.service.gov.uk/procurement/ocds-h6vhtk-06857b",
+      "country": "GB",
+      "posted_date": "2026-11-10",
+      "due_date": "2026-12-11",
+      "summary": "Caerphilly County Borough Council invites tenders for the provision, implementation, support and maintenance of a comprehensive Electronic Committee Management System (ECMS).",
+      "description": "Caerphilly County Borough Council invites tenders for the provision, implementation, support and maintenance of a comprehensive Electronic Committee Management System (ECMS).\nThe Council requires a modern, secure, cloud-hosted solution to support the administration and governance of democratic services and committee management activities. The solution must facilitate the efficient creation, management, publication and archiving of committee agendas, reports, minutes, decisions and associated meeting documentation.\nThe Council requires a fully bilingual (English and Welsh) system that supports the needs of elected Members, officers and the public whilst ensuring compliance with Welsh Language Standards, accessibility requirements, data protection legislation and recognised security standards.\nThe solution should provide functionality including, but not limited to:\n•\tCommittee, meeting and calendar management.\n•\tAgenda, report and minutes production workflows.\n•\tDecision and action tracking.\n•\tPublic-facing committee information and publication portal.\n•\tSecure Member and officer access via desktop, tablet and mobile devices.\n•\tBilingual content management and publication.\n•\tElectronic distribution of meeting papers.\n•\tMeeting attendance and voting management.\n•\tDocument storage, search and retrieval functionality.\n•\tIntegration with Microsoft 365 and other relevant Council systems.\n•\tRole-based access controls and audit reporting.\n•\tManagement information and performance reporting.\nThe successful supplier will be responsible for:\n•\tSolution provisioning and implementation.\n•\tSystem configuration and data migration where required.\n•\tUser acceptance testing support.\n•\tTraining for system administrators, officers and elected Members.\n•\tOngoing software maintenance, upgrades and technical support.\nFull details can be found in the ITT (Tender Pack)",
+      "cpv": [
+        "48000000",
+        "72000000",
+        "75110000"
+      ],
+      "opp_type": "Open",
+      "value_estimate": {
+        "low": 200000,
+        "high": 200000,
+        "currency": "GBP"
+      }
+    }
+  ],
+  "cursor": {
+    "fts2": {
+      "through": "2026-11-12T00:00:00Z",
+      "next": null
+    },
+    "cf2": "2026-11-12"
+  }
+}

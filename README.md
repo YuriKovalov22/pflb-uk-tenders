@@ -63,7 +63,20 @@ asks for the whole week before that day, unfiltered. If the week holds a notice,
 answering and the quiet day is real; if the week is empty too, the day is left unread for the next
 run. A genuinely quiet day does exist — Contracts Finder publishes nothing on a Sunday.
 
-Marks are kept under the keys `fts2` and `cf2`. An installation upgrading from v0.1.7 or earlier
+**A day of Find a Tender takes longer to read than a whole run.** Measured 20 November 2026 on
+the day 10 November: a page of 100 notices costs 86.7 s (912 KB), and about 35 s of that is the
+asking itself, so smaller pages are far more expensive per notice — and 100 is the most the feed
+allows (150 and 200 are refused). That day held 407 notices: four or five pages, some 350 s, where
+a run has 200 s in all. So a mark left days behind can never be caught up by reading it in order.
+
+The module therefore reads in two halves. The **front** is the newest days (`LAG_DAYS` = 2) and is
+read first, with the larger part of the time. Anything older becomes the **backlog**, read behind
+the front with what is left — never starved, never in the way. The backlog disappears from the
+cursor once it is read in full, and the run says so. Because a run reads roughly one page of each
+half, **how often the source runs is what sets the pace**: every 2 hours keeps the feed current
+with room to spare and clears a week of backlog in about three days.
+
+Marks are kept under the keys `fts2` and `cf2`; the backlog lives in `fts2.lag`. An installation upgrading from v0.1.7 or earlier
 (which marked its progress under `fts` / `cf`) re-reads from `FTS_READ_FROM` / `CF_READ_FROM`, so
 the notices the older versions lost come in by themselves; the old keys are then dropped. A
 brand-new installation simply reads `FIRST_RUN_DAYS` back.

@@ -1,0 +1,874 @@
+{
+"uri": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-05T08:00:00Z&updatedTo=2026-11-12T08:00:00Z&limit=100",
+"version": "1.1",
+"extensions": [
+"https://standard.open-contracting.org/profiles/eu/latest/en/extension.json",
+"https://raw.githubusercontent.com/open-contracting-extensions/ocds_amendment_rationale_classifications_extension/master/extension.json",
+"https://raw.githubusercontent.com/open-contracting-extensions/ocds_budget_breakdown_extension/master/extension.json",
+"https://raw.githubusercontent.com/open-contracting-extensions/ocds_contract_completion_extension/master/extension.json",
+"https://raw.githubusercontent.com/open-contracting-extensions/ocds_documentation_extension/master/extension.json",
+"https://raw.githubusercontent.com/open-contracting-extensions/ocds_pagination_extension/master/extension.json",
+"https://raw.githubusercontent.com/open-contracting-extensions/ocds_suitability_extension/master/extension.json",
+"https://raw.githubusercontent.com/portaledcahn/ocds_Links_extension/main/extension.json",
+"https://raw.githubusercontent.com/cabinetoffice/ocds_uk_extension/main/extension.json",
+"https://raw.githubusercontent.com/open-contracting-extensions/ocds_performance_failures_extension/master/extension.json"
+],
+"publishedDate": "2026-11-12T07:55:59Z",
+"publisher": {
+"name": "Cabinet Office",
+"scheme": "GB-GOR",
+"uid": "D2",
+"uri": "https://www.gov.uk/government/organisations/cabinet-office"
+},
+"license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+"publicationPolicy": "https://www.gov.uk/government/publications/open-contracting",
+"releases": [
+{
+"buyerID": [],
+"id": "106695-2026",
+"tag": [
+"tender"
+],
+"date": "2026-11-10T13:55:09Z",
+"initiationType": "tender",
+"ocid": "ocds-h6vhtk-06857b",
+"parties": [
+{
+"name": "Caerphilly County Borough Council",
+"id": "GB-PPON-PWHP-2369-JPYL",
+"identifier": {
+"scheme": "GB-PPON",
+"id": "PWHP-2369-JPYL"
+},
+"address": {
+"streetAddress": "Penallta House, Tredomen Park",
+"locality": "Hengoed",
+"postalCode": "CF82 7PG",
+"country": "GB",
+"countryName": "United Kingdom",
+"region": "UKL16"
+},
+"contactPoint": {
+"name": "Gareth Hegarty",
+"email": "hegarg@caerphilly.gov.uk",
+"telephone": "01443863061"
+},
+"roles": [
+"buyer"
+],
+"details": {
+"url": "http://www.caerphilly.gov.uk",
+"classifications": [
+{
+"scheme": "UK_CA_TYPE",
+"id": "publicAuthoritySubCentralGovernment",
+"description": "Public authority - sub-central government"
+},
+{
+"scheme": "UK_CA_DEVOLVED_REGULATIONS",
+"id": "GB-WLS",
+"description": "Welsh devolved regulations apply"
+}
+]
+}
+}
+],
+"buyer": {
+"id": "GB-PPON-PWHP-2369-JPYL",
+"name": "Caerphilly County Borough Council"
+},
+"tender": {
+"id": "CCBC/PS3024/26/GH",
+"legalBasis": {
+"id": "2023/54",
+"scheme": "UKPGA",
+"uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+},
+"title": "Electronic Committee Management System (ECMS).",
+"description": "Caerphilly County Borough Council invites tenders for the provision, implementation, support and maintenance of a comprehensive Electronic Committee Management System (ECMS).\nThe Council requires a modern, secure, cloud-hosted solution to support the administration and governance of democratic services and committee management activities. The solution must facilitate the efficient creation, management, publication and archiving of committee agendas, reports, minutes, decisions and associated meeting documentation.\nThe Council requires a fully bilingual (English and Welsh) system that supports the needs of elected Members, officers and the public whilst ensuring compliance with Welsh Language Standards, accessibility requirements, data protection legislation and recognised security standards.\nThe solution should provide functionality including, but not limited to:\n•\tCommittee, meeting and calendar management.\n•\tAgenda, report and minutes production workflows.\n•\tDecision and action tracking.\n•\tPublic-facing committee information and publication portal.\n•\tSecure Member and officer access via desktop, tablet and mobile devices.\n•\tBilingual content management and publication.\n•\tElectronic distribution of meeting papers.\n•\tMeeting attendance and voting management.\n•\tDocument storage, search and retrieval functionality.\n•\tIntegration with Microsoft 365 and other relevant Council systems.\n•\tRole-based access controls and audit reporting.\n•\tManagement information and performance reporting.\nThe successful supplier will be responsible for:\n•\tSolution provisioning and implementation.\n•\tSystem configuration and data migration where required.\n•\tUser acceptance testing support.\n•\tTraining for system administrators, officers and elected Members.\n•\tOngoing software maintenance, upgrades and technical support.\nFull details can be found in the ITT (Tender Pack)",
+"status": "active",
+"items": [
+{
+"id": "1",
+"additionalClassifications": [
+{
+"scheme": "CPV",
+"id": "72000000",
+"description": "IT services: consulting, software development, Internet and support"
+},
+{
+"scheme": "CPV",
+"id": "48000000",
+"description": "Software package and information systems"
+},
+{
+"scheme": "CPV",
+"id": "75110000",
+"description": "General public services"
+}
+],
+"deliveryAddresses": [
+{
+"region": "UKL16",
+"country": "GB",
+"countryName": "United Kingdom"
+}
+],
+"relatedLot": "1"
+}
+],
+"value": {
+"amountGross": 240000.0,
+"amount": 200000.0,
+"currency": "GBP"
+},
+"procurementMethod": "open",
+"procurementMethodDetails": "Competitive flexible procedure",
+"procedure": {
+"features": "The procurement will be conducted using a multi-stage evaluation process under the Competitive Flexible Procedure, as provided for by the Procurement Act 2023"
+},
+"mainProcurementCategory": "services",
+"aboveThreshold": true,
+"submissionMethodDetails": "HEGARG@caerphilly.gov.uk ",
+"submissionTerms": {
+"electronicSubmissionPolicy": "notAllowed",
+"languages": [
+"en"
+]
+},
+"tenderPeriod": {
+"endDate": "2026-12-11T12:00:00+00:00"
+},
+"enquiryPeriod": {
+"endDate": "2026-11-27T12:00:00+00:00"
+},
+"awardPeriod": {
+"endDate": "2027-03-01T23:59:59+00:00"
+},
+"lots": [
+{
+"id": "1",
+"status": "active",
+"value": {
+"amountGross": 240000.0,
+"amount": 200000.0,
+"currency": "GBP"
+},
+"awardCriteria": {
+"criteria": [
+{
+"type": "quality",
+"name": "Quality Questions ",
+"description": "Quality Questions ",
+"numbers": [
+{
+"number": 35.0,
+"weight": "percentageExact"
+}
+]
+},
+{
+"type": "price",
+"name": "Price",
+"description": "Price",
+"numbers": [
+{
+"number": 20.0,
+"weight": "percentageExact"
+}
+]
+},
+{
+"type": "cost",
+"name": "Demonstration ",
+"description": "Demonstration ",
+"numbers": [
+{
+"number": 45.0,
+"weight": "percentageExact"
+}
+]
+}
+]
+},
+"suitability": {
+"sme": true,
+"vcse": true
+},
+"contractPeriod": {
+"startDate": "2027-11-01T00:00:00+00:00",
+"endDate": "2032-10-31T23:59:59+00:00",
+"maxExtentDate": "2037-11-01T23:59:59+00:00"
+},
+"hasRenewal": true,
+"renewal": {
+"description": "Five year extension option renewed annually "
+},
+"description": null
+}
+],
+"documents": [
+{
+"id": "conflictOfInterest",
+"documentType": "conflictOfInterest",
+"description": "Not published"
+},
+{
+"id": "106695-2026",
+"documentType": "tenderNotice",
+"noticeType": "UK4",
+"description": "Tender notice on Find a Tender",
+"url": "https://www.find-tender.service.gov.uk/Notice/106695-2026",
+"datePublished": "2026-11-10T13:55:09Z",
+"format": "text/html"
+}
+],
+"contractTerms": {
+"financialTerms": "30 days "
+}
+},
+"language": "en"
+},
+{
+"buyerID": [],
+"id": "106617-2026",
+"tag": [
+"award",
+"contract"
+],
+"date": "2026-11-10T12:15:55Z",
+"initiationType": "tender",
+"ocid": "ocds-h6vhtk-06ab7a",
+"parties": [
+{
+"name": "Warwickshire County Council",
+"id": "GB-PPON-PDTN-5446-NMXW",
+"identifier": {
+"scheme": "GB-PPON",
+"id": "PDTN-5446-NMXW"
+},
+"address": {
+"streetAddress": "Shire Hall",
+"locality": "Warwick",
+"postalCode": "CV34 4SA",
+"country": "GB",
+"countryName": "United Kingdom",
+"region": "UKG13"
+},
+"contactPoint": {
+"email": "procurement@warwickshire.gov.uk"
+},
+"roles": [
+"buyer"
+],
+"details": {
+"url": "http://www.warwickshire.gov.uk",
+"classifications": [
+{
+"scheme": "UK_CA_TYPE",
+"id": "publicAuthoritySubCentralGovernment",
+"description": "Public authority - sub-central government"
+}
+]
+}
+},
+{
+"name": "PERMANENT FUTURES LIMITED",
+"id": "GB-COH-04430310",
+"identifier": {
+"scheme": "GB-COH",
+"id": "04430310"
+},
+"additionalIdentifiers": [
+{
+"scheme": "GB-PPON",
+"id": "PLHY-2943-ZDLH"
+}
+],
+"address": {
+"streetAddress": "19 New Street Horsforth",
+"locality": "Leeds",
+"postalCode": "LS18 4BH",
+"country": "GB",
+"countryName": "United Kingdom",
+"region": "UKE42"
+},
+"contactPoint": {
+"email": "rachel.mather@futures.co.uk"
+},
+"roles": [
+"supplier"
+],
+"details": {
+"url": "http://www.futures.co.uk",
+"scale": "sme",
+"vcse": false,
+"publicServiceMissionOrganization": false,
+"shelteredWorkshop": false
+}
+}
+],
+"buyer": {
+"id": "GB-PPON-PDTN-5446-NMXW",
+"name": "Warwickshire County Council"
+},
+"tender": {
+"id": "ocds-h6vhtk-06ab7a",
+"legalBasis": {
+"id": "2023/54",
+"scheme": "UKPGA",
+"uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+},
+"title": "Case Management Migration",
+"description": "The contract comprises the provision of programme, project management and testing services to support Warwickshire County Council's migration of its Mosaic social care case management system, Abacus and Synergy including case management from on‑premise hosting to a cloud‑hosted environment.\nThe scope of services includes the planning, coordination and delivery of a \"lift and shift\" (like‑for‑like) transition of these applications to The Access Group's cloud hosting platform. The migration will ensure continuity of service, system accessibility, and operational integrity for social care users, without introducing new functionality at the point of go‑live.\nThe provider will deliver a structured testing approach covering all core system components, including connectivity and access, administrative functions, workflows, forms, reference data, finance and commissioning modules, and reporting and business intelligence outputs. Testing will include multiple user acceptance testing (UAT) cycles, dry run validation and go‑live readiness activities.\nThe contract includes responsibility for programme governance, project management, test management, and business intelligence support. Key deliverables include assurance that the applications remain accessible to all intended users, that existing workflows and processes function in line with the current configuration, and that users are able to access historic records and continue case management activities following migration.",
+"status": "complete",
+"procurementMethod": "direct",
+"procurementMethodDetails": "Direct award",
+"procurementMethodRationale": "Permanent Futures were successful in an initial procurement exercise to find a partner to support the migration. Having completed the activities from the procurement exercise, it has become clear that the current delivery vehicle could be enhanced through further external support.\nHaving completed the initial contract, the supplier has enabled the planned delivery of services, and therefore removing them from the project at this stage would create disproportionate technical difficulties for the Council if an alternative supplier was appointed.",
+"lots": [
+{
+"id": "1",
+"status": "complete",
+"description": null
+}
+],
+"documents": [
+{
+"id": "conflictOfInterest",
+"documentType": "conflictOfInterest",
+"description": "Not published"
+}
+],
+"procurementMethodRationaleClassifications": [
+{
+"id": "additionalRepeatExtensionPartialReplacement"
+}
+]
+},
+"awards": [
+{
+"id": "1",
+"status": "active",
+"mainProcurementCategory": "services",
+"suppliers": [
+{
+"id": "GB-COH-04430310",
+"name": "PERMANENT FUTURES LIMITED"
+}
+],
+"items": [
+{
+"id": "1",
+"additionalClassifications": [
+{
+"scheme": "CPV",
+"id": "72000000",
+"description": "IT services: consulting, software development, Internet and support"
+}
+],
+"deliveryAddresses": [
+{
+"region": "UKG",
+"country": "GB",
+"countryName": "United Kingdom"
+}
+],
+"relatedLot": "1"
+}
+],
+"relatedLots": [
+"1"
+]
+}
+],
+"contracts": [
+{
+"id": "1",
+"awardID": "1",
+"status": "active",
+"period": {
+"startDate": "2026-10-28T00:00:00Z",
+"endDate": "2028-06-09T23:59:59+01:00"
+},
+"value": {
+"amountGross": 720000.0,
+"amount": 600000.0,
+"currency": "GBP"
+},
+"aboveThreshold": true,
+"dateSigned": "2026-10-28T00:00:00Z",
+"agreedMetrics": [
+{
+"id": "1",
+"title": "Timely  incorporation  of approved  programme  changes"
+},
+{
+"id": "2",
+"title": "Timely  completion of  Supplier owned  actions"
+},
+{
+"id": "3",
+"title": "Timely  closure of  Supplier owned  escalation  actions"
+},
+{
+"id": "4",
+"title": "Accurate  invoicing"
+}
+],
+"statusDetails": null,
+"documents": [
+{
+"id": "106617-2026",
+"documentType": "contractNotice",
+"noticeType": "UK7",
+"description": "Contract details notice on Find a Tender",
+"url": "https://www.find-tender.service.gov.uk/Notice/106617-2026",
+"datePublished": "2026-11-10T12:15:55Z",
+"format": "text/html"
+}
+]
+}
+],
+"language": "en"
+},
+{
+"ocid": "ocds-h6vhtk-07b833",
+"buyerID": [],
+"id": "106500-2026",
+"tag": [
+"award",
+"contract"
+],
+"date": "2026-11-10T09:36:26Z",
+"initiationType": "tender",
+"parties": [
+{
+"name": "SATELLITE APPLICATIONS CATAPULT LIMITED",
+"id": "GB-COH-07964746",
+"identifier": {
+"scheme": "GB-COH",
+"id": "07964746"
+},
+"additionalIdentifiers": [
+{
+"scheme": "GB-PPON",
+"id": "PBPQ-6352-VJPD"
+}
+],
+"address": {
+"streetAddress": "Quad Three , Rutherford Avenue, Harwell Science & Innovation Campus",
+"locality": "Harwell",
+"postalCode": "OX11 0DF",
+"country": "GB",
+"countryName": "United Kingdom",
+"region": "UKJ14"
+},
+"contactPoint": {
+"email": "procurement@sa.catapult.org.uk"
+},
+"roles": [
+"buyer"
+],
+"details": {
+"url": "https://sa.catapult.org.uk/",
+"classifications": [
+{
+"scheme": "UK_CA_TYPE",
+"id": "publicUndertaking",
+"description": "Public undertaking"
+}
+]
+}
+},
+{
+"name": "Arkisys Inc.",
+"id": "GB-PPON-PYNR-5481-BTPN",
+"identifier": {
+"scheme": "GB-PPON",
+"id": "PYNR-5481-BTPN"
+},
+"address": {
+"streetAddress": "10641 Calle Lee, Ste 161",
+"locality": "Los Alamitos, CA",
+"postalCode": "90720",
+"country": "US",
+"countryName": "United States",
+"region": "US"
+},
+"contactPoint": {
+"email": "operations@arkisys.com"
+},
+"roles": [
+"supplier"
+],
+"details": {
+"scale": "sme",
+"vcse": false
+}
+}
+],
+"buyer": {
+"id": "GB-COH-07964746",
+"name": "SATELLITE APPLICATIONS CATAPULT LIMITED"
+},
+"tender": {
+"id": "ocds-h6vhtk-07b833",
+"legalBasis": {
+"id": "2023/54",
+"scheme": "UKPGA",
+"uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+},
+"title": "Robotic Autonomy Software Testing",
+"description": "Provision of services to support the qualification, testing, validation, and operational deployment of robotic autonomy software for space-based applications.",
+"status": "complete",
+"procurementMethod": "direct",
+"procurementMethodDetails": "Below threshold - without competition",
+"lots": [
+{
+"id": "1",
+"status": "complete",
+"description": null
+}
+]
+},
+"awards": [
+{
+"id": "1",
+"status": "active",
+"mainProcurementCategory": "services",
+"suppliers": [
+{
+"id": "GB-PPON-PYNR-5481-BTPN",
+"name": "Arkisys Inc."
+}
+],
+"items": [
+{
+"id": "1",
+"additionalClassifications": [
+{
+"scheme": "CPV",
+"id": "71600000",
+"description": "Technical testing, analysis and consultancy services"
+}
+],
+"deliveryAddresses": [
+{
+"region": "UKJ1",
+"country": "GB",
+"countryName": "United Kingdom"
+}
+],
+"relatedLot": "1"
+}
+],
+"relatedLots": [
+"1"
+]
+}
+],
+"contracts": [
+{
+"id": "1",
+"awardID": "1",
+"status": "active",
+"period": {
+"startDate": "2026-09-09T00:00:00+01:00",
+"endDate": "2027-11-30T23:59:59Z"
+},
+"value": {
+"amountGross": 150000,
+"amount": 125000,
+"currency": "USD"
+},
+"aboveThreshold": false,
+"dateSigned": "2026-09-09T00:00:00+01:00",
+"statusDetails": null,
+"documents": [
+{
+"id": "106500-2026",
+"documentType": "contractNotice",
+"noticeType": "UK7",
+"description": "Contract details notice on Find a Tender",
+"url": "https://www.find-tender.service.gov.uk/Notice/106500-2026",
+"datePublished": "2026-11-10T09:36:26Z",
+"format": "text/html"
+}
+]
+}
+],
+"language": "en"
+},
+{
+"ocid": "ocds-h6vhtk-07b973",
+"id": "107360-2026",
+"date": "2026-11-12T07:55:59Z",
+"tag": [
+"tenderUpdate"
+],
+"initiationType": "tender",
+"tender": {
+"id": "ocds-h6vhtk-07b973",
+"legalBasis": {
+"id": "32014L0024",
+"scheme": "CELEX"
+},
+"title": "Clinical Diagnosis and Treatment",
+"classification": {
+"scheme": "CPV",
+"id": "85100000",
+"description": "Health services"
+},
+"mainProcurementCategory": "services",
+"description": "The purpose of this framework is for the provision of Clinical Diagnosis & Treatment services that fall under the Lots listed in the ITT.\nServices offered under this framework will meet the highest industry standards and support Beneficiaries with the current and future day-to-day activities in respect of the requirements.\nThe intention is to offer an accessible and compliant route to market for organisations to easily manage multiple services, assisting Beneficiaries in the management of waiting list within services to meet NHS targets.\nThe framework will be comprised of 9 lots:\n• Lot 1 - Dermatology\n• Lot 2 - Oral and Maxillofacial surgery\n• Lot 3 - Audiology\n• Lot 4 - Ophthalmology\n• Lot 5 - ENT (Ear, Nose & Throat)\n• Lot 6 - Gastroenterology\n• Lot 7 - Urology\n• Lot 8 - Endoscopy\n• Lot 9 - Managed Services\nThis is the first reopening of the framework as described in the original framework documents -  2025/S 000-055693\nThe term of the framework will be 2 years plus an optional one year extension. \nThis framework is being run under the Provider Selection Regime.\nThe framework is for the benefit of existing and emerging organisations during the life of the Contract and is intended to\nsupport Relevant Authorities when procuring such services. \nRelevant authorities as follows:\n• NHS England\n• Integrated care boards (ICBs)\n• NHS trusts and NHS foundation trusts\n• Local authorities and combined authorities.\nThis framework is not accessible by Authorities in Wales, Scotland and Northern Ireland.",
+"amendments": [
+{
+"id": "1",
+"unstructuredChanges": [
+{
+"oldValue": {
+"text": "The procurement documents are available for unrestricted and full direct access, free of charge, at\nhttps://health-family.force.com/s/Welcome\nAdditional information can be obtained from the above-mentioned address\nTenders or requests to participate must be submitted electronically via\nhttps://health-family.force.com/s/Welcome\nElectronic communication requires the use of tools and devices that are not generally available. Unrestricted and full direct access to these tools and devices is possible, free of charge, at\nhttps://health-family.force.com/s/Welcome"
+},
+"newValue": {
+"text": "The procurement documents are available for unrestricted and full direct access, free of charge, at\nhttps://health-family.force.com/s/Welcome\nAdditional information can be obtained from the above-mentioned address\nTenders or requests to participate must be submitted electronically via\nhttps://health-family.force.com/s/Welcome\nElectronic communication requires the use of tools and devices that are not generally available. Unrestricted and full direct access to these tools and devices is possible, free of charge, at\nhttps://health-family.force.com/s/Welcome\nSuppliers should register, if not already on the Atamis portal. Search Contract reference C488468 to view the documents."
+},
+"where": {
+"section": "I.3",
+"label": "Communication"
+}
+}
+],
+"description": "Suppliers should register, if not already on the Atamis portal. Search Contract Reference C488468 to view the documents."
+}
+]
+},
+"parties": [
+{
+"name": "East of England NHS collaborative Procurement Hub c/o West Suffolk NHS Foundation Trust",
+"id": "GB-NHS-West Suffolk NHS Foundation Trust",
+"identifier": {
+"legalName": "East of England NHS collaborative Procurement Hub c/o West Suffolk NHS Foundation Trust",
+"id": "West Suffolk NHS Foundation Trust",
+"scheme": "GB-NHS"
+},
+"address": {
+"streetAddress": "Victoria House, Camlife, Cambridge Road, Fulbourn",
+"locality": "Cambridge",
+"region": "UK",
+"postalCode": "CB215XA",
+"countryName": "United Kingdom"
+},
+"contactPoint": {
+"name": "Procurement, Assurance and Compliance Team",
+"email": "frameworks@eoecph.nhs.uk"
+},
+"roles": [
+"buyer"
+],
+"details": {
+"url": "https://www.eoecph.nhs.uk"
+}
+}
+],
+"buyer": {
+"id": "GB-NHS-West Suffolk NHS Foundation Trust",
+"name": "East of England NHS collaborative Procurement Hub c/o West Suffolk NHS Foundation Trust"
+},
+"language": "en"
+},
+{
+"buyerID": [],
+"id": "107359-2026",
+"tag": [
+"award",
+"contract"
+],
+"date": "2026-11-12T07:51:51Z",
+"initiationType": "tender",
+"ocid": "ocds-h6vhtk-0784e5",
+"parties": [
+{
+"name": "Scottish Police Authority",
+"id": "GB-PPON-PVNH-1196-RLWN",
+"identifier": {
+"scheme": "GB-PPON",
+"id": "PVNH-1196-RLWN"
+},
+"address": {
+"streetAddress": "2 French Street",
+"locality": "Glasgow",
+"postalCode": "G40 4EH",
+"country": "GB",
+"countryName": "United Kingdom",
+"region": "UKM82"
+},
+"contactPoint": {
+"email": "procurementtenders@scotland.police.uk"
+},
+"roles": [
+"buyer"
+],
+"details": {
+"classifications": [
+{
+"scheme": "UK_CA_TYPE",
+"id": "publicAuthorityCentralGovernment",
+"description": "Public authority - central government"
+},
+{
+"scheme": "UK_CA_DEVOLVED_REGULATIONS",
+"id": "GB-SCT",
+"description": "Scottish devolved regulations apply"
+}
+]
+}
+},
+{
+"name": "J P Bond & Co",
+"id": "GB-PPON-PMTJ-1325-NBGV",
+"identifier": {
+"scheme": "GB-PPON",
+"id": "PMTJ-1325-NBGV"
+},
+"address": {
+"streetAddress": "Unit 1, Newgrove Business Park,",
+"locality": "Monaghan",
+"postalCode": "H18 K523",
+"country": "IE",
+"countryName": "Ireland",
+"region": "IE"
+},
+"contactPoint": {
+"email": "paul@bondsafety.com"
+},
+"roles": [
+"supplier"
+],
+"details": {
+"url": "http://www.brixworkwear.co.uk",
+"scale": "sme",
+"vcse": false,
+"publicServiceMissionOrganization": false,
+"shelteredWorkshop": false
+}
+}
+],
+"buyer": {
+"id": "GB-PPON-PVNH-1196-RLWN",
+"name": "Scottish Police Authority"
+},
+"tender": {
+"id": "Proc-26-3535",
+"legalBasis": {
+"id": "2023/54",
+"scheme": "UKPGA",
+"uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+},
+"title": "Operational Footwear - General Duty",
+"description": "Appointment of JP Bond & Company Ltd as the preferred supplier of general duty operational footwear to Police Scotland via the Bluelight Commercial Framework (Ref: BLC0210).",
+"status": "complete",
+"procurementMethod": "selective",
+"procurementMethodDetails": "Award under framework",
+"competitive": false,
+"lots": [
+{
+"id": "1",
+"status": "complete",
+"description": null
+}
+],
+"documents": [
+{
+"id": "conflictOfInterest",
+"documentType": "conflictOfInterest",
+"description": "Not published"
+}
+]
+},
+"awards": [
+{
+"id": "1",
+"status": "active",
+"mainProcurementCategory": "goods",
+"suppliers": [
+{
+"id": "GB-PPON-PMTJ-1325-NBGV",
+"name": "J P Bond & Co"
+}
+],
+"items": [
+{
+"id": "1",
+"additionalClassifications": [
+{
+"scheme": "CPV",
+"id": "18800000",
+"description": "Footwear"
+}
+],
+"deliveryAddresses": [
+{
+"region": "UKM",
+"country": "GB",
+"countryName": "United Kingdom"
+}
+],
+"relatedLot": "1"
+}
+],
+"relatedLots": [
+"1"
+]
+}
+],
+"contracts": [
+{
+"id": "1",
+"awardID": "1",
+"title": "Operational Footwear - General Duty",
+"status": "active",
+"period": {
+"startDate": "2026-10-22T00:00:00+01:00",
+"endDate": "2029-10-21T23:59:59+01:00"
+},
+"value": {
+"amountGross": 1199998.8,
+"amount": 999999.0,
+"currency": "GBP"
+},
+"aboveThreshold": true,
+"dateSigned": "2026-10-21T00:00:00+01:00",
+"noAgreedMetricsRationale": "Not applicable - devolved Scottish Authority",
+"statusDetails": null,
+"documents": [
+{
+"id": "107359-2026",
+"documentType": "contractNotice",
+"noticeType": "UK7",
+"description": "Contract details notice on Find a Tender",
+"url": "https://www.find-tender.service.gov.uk/Notice/107359-2026",
+"datePublished": "2026-11-12T07:51:51Z",
+"format": "text/html"
+}
+]
+}
+],
+"relatedProcesses": [
+{
+"id": "framework",
+"relationship": [
+"framework"
+],
+"scheme": "ocid",
+"identifier": "ocds-h6vhtk-0552e1",
+"relatedLots": [
+"LOT-0003"
+],
+"uri": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages/ocds-h6vhtk-0552e1"
+}
+],
+"language": "en"
+}
+],
+"links": {}
+}
