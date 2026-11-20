@@ -704,7 +704,6 @@ def find(context):
     records, seen = [], set()
 
     started = time.monotonic()
-    front_deadline = started + RUN_BUDGET_S * FTS_SHARE * FRONT_SHARE
     fts_deadline = started + RUN_BUDGET_S * FTS_SHARE
     cf_deadline = started + RUN_BUDGET_S
 
@@ -751,6 +750,11 @@ def find(context):
 
     # Day by day, oldest first within each half. Each day read in full moves that half's mark,
     # so a run that dies part way keeps what it earned instead of starting over next time.
+    # The front is held to its share only while there IS a backlog to leave time for. With no
+    # backlog the whole of Find a Tender's share is the front's -- otherwise a run would sit idle
+    # for a third of its time with days still unread, which is what the pace depends on when the
+    # source runs only a few times a day.
+    front_deadline = (started + RUN_BUDGET_S * FTS_SHARE * FRONT_SHARE) if lag else fts_deadline
     resumed = bool(carried)
     fts_through, fts_left, fts_ok, fts_scanned, fts_theme = _read_fts_span(
         "", fts_from, now, carried, now_day, records, seen, front_deadline)
