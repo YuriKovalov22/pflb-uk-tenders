@@ -7,7 +7,7 @@
   "contract": { "version": 1 },
   "entry": "find.py",
   "sdk": { "version": "0.2.0" },
-  "schedule": { "every_minutes": 1440 },
+  "schedule": { "every_minutes": 360 },
   "secrets": [],
   "hosts": ["www.find-tender.service.gov.uk", "www.contractsfinder.service.gov.uk"],
   "time_limit_seconds": 200,

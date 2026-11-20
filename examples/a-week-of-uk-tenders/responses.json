@@ -1,122 +1,59 @@
 {
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-05T08:00:00Z&updatedTo=2026-11-06T08:00:00Z&stages=planning": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-05T08:00:00Z&updatedTo=2026-11-06T08:00:00Z&stages=tender": {
-  "status": 200,
+ "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-10T00:00:00Z&updatedTo=2026-11-11T00:00:00Z&limit=100": {
   "file": "fts-page.json"
  },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-06T08:00:00Z&updatedTo=2026-11-07T08:00:00Z&stages=planning": {
-  "status": 200,
+ "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-11T00:00:00Z&updatedTo=2026-11-12T00:00:00Z&limit=100": {
   "file": "empty-page.json"
  },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-06T08:00:00Z&updatedTo=2026-11-07T08:00:00Z&stages=tender": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-07T08:00:00Z&updatedTo=2026-11-08T08:00:00Z&stages=planning": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-07T08:00:00Z&updatedTo=2026-11-08T08:00:00Z&stages=tender": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-08T08:00:00Z&updatedTo=2026-11-09T08:00:00Z&stages=planning": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-08T08:00:00Z&updatedTo=2026-11-09T08:00:00Z&stages=tender": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-09T08:00:00Z&updatedTo=2026-11-10T08:00:00Z&stages=planning": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-09T08:00:00Z&updatedTo=2026-11-10T08:00:00Z&stages=tender": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-10T08:00:00Z&updatedTo=2026-11-11T08:00:00Z&stages=planning": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-10T08:00:00Z&updatedTo=2026-11-11T08:00:00Z&stages=tender": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-11T08:00:00Z&updatedTo=2026-11-12T08:00:00Z&stages=planning": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-11T08:00:00Z&updatedTo=2026-11-12T08:00:00Z&stages=tender": {
-  "status": 200,
-  "file": "empty-page.json"
- },
- "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-05&publishedTo=2026-11-06&size=100&stages=planning": {
-  "status": 200,
+ "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?updatedFrom=2026-11-12T00:00:00Z&updatedTo=2026-11-12T08:00:00Z&limit=100": {
   "file": "empty-page.json"
  },
  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-05&publishedTo=2026-11-06&size=100&stages=tender": {
-  "status": 200,
   "file": "cf-page.json"
  },
- "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-06&publishedTo=2026-11-07&size=100&stages=planning": {
-  "status": 200,
+ "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-05&publishedTo=2026-11-06&size=100&stages=planning": {
   "file": "empty-page.json"
  },
  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-06&publishedTo=2026-11-07&size=100&stages=tender": {
-  "status": 200,
   "file": "empty-page.json"
  },
- "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-07&publishedTo=2026-11-08&size=100&stages=planning": {
-  "status": 200,
+ "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-06&publishedTo=2026-11-07&size=100&stages=planning": {
   "file": "empty-page.json"
  },
  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-07&publishedTo=2026-11-08&size=100&stages=tender": {
-  "status": 200,
   "file": "empty-page.json"
  },
- "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-08&publishedTo=2026-11-09&size=100&stages=planning": {
-  "status": 200,
+ "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-07&publishedTo=2026-11-08&size=100&stages=planning": {
   "file": "empty-page.json"
  },
  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-08&publishedTo=2026-11-09&size=100&stages=tender": {
-  "status": 200,
   "file": "empty-page.json"
  },
- "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-09&publishedTo=2026-11-10&size=100&stages=planning": {
-  "status": 200,
+ "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-08&publishedTo=2026-11-09&size=100&stages=planning": {
   "file": "empty-page.json"
  },
  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-09&publishedTo=2026-11-10&size=100&stages=tender": {
-  "status": 200,
   "file": "empty-page.json"
  },
- "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-10&publishedTo=2026-11-11&size=100&stages=planning": {
-  "status": 200,
+ "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-09&publishedTo=2026-11-10&size=100&stages=planning": {
   "file": "empty-page.json"
  },
  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-10&publishedTo=2026-11-11&size=100&stages=tender": {
-  "status": 200,
   "file": "empty-page.json"
  },
- "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-11&publishedTo=2026-11-12&size=100&stages=planning": {
-  "status": 200,
+ "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-10&publishedTo=2026-11-11&size=100&stages=planning": {
   "file": "empty-page.json"
  },
  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-11&publishedTo=2026-11-12&size=100&stages=tender": {
-  "status": 200,
   "file": "empty-page.json"
  },
- "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-12&publishedTo=2026-11-13&size=100&stages=planning": {
-  "status": 200,
+ "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-11&publishedTo=2026-11-12&size=100&stages=planning": {
   "file": "empty-page.json"
  },
  "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-12&publishedTo=2026-11-13&size=100&stages=tender": {
-  "status": 200,
+  "file": "empty-page.json"
+ },
+ "https://www.contractsfinder.service.gov.uk/Published/Notices/OCDS/Search?publishedFrom=2026-11-12&publishedTo=2026-11-13&size=100&stages=planning": {
   "file": "empty-page.json"
  }
 }

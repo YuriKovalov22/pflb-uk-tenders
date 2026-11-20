@@ -25,6 +25,7 @@ A bid carries the sentence that says what must be done (summary), the full notic
 and the rule that took it with its evidence quote (matched). Tommo Bids triages it from there.
 """
 import re
+import threading
 import time
 from tommos_module import ContractError, a_bid, a_date, a_key, fetch, log, the_cursor
 
@@ -35,21 +36,40 @@ FIRST_RUN_DAYS = 7          # how far back the very first run looks (no cursor y
 # widening, the page keeps growing (a 12-day window of Find a Tender is 1.6 MB and 28 s on a
 # good minute), and a feed that is merely slow becomes a feed that can never be read again.
 # So the look-back is capped. When the cap bites, the run says plainly which span it skipped.
-MAX_LOOKBACK_DAYS = 10
+MAX_LOOKBACK_DAYS = 30     # wide enough to read itself out of a backlog; the clamp still
+                           # says out loud which days it refuses to read
 MAX_PAGES = 12              # page cap per feed, so one run stays inside the time limit
 
 # Both feeds answer every notice updated in the window -- awards, amendments, contract
-# records, the lot. The sieve then throws away everything that is not an open opportunity,
-# so a whole day of Find a Tender arrived as 664 releases over 7 pages to keep 12 of them.
-# Asking the feed for the stages we actually want turns that into one page of 12 in under
-# two seconds (measured 2026-11-17). The two feeds take ONE stage per call -- a repeated
-# or comma-joined `stages` keeps only the last -- so each feed is read once per stage.
-# Tender first. Planning used to go first because it is cheap -- three releases and a
-# second of work -- but on a day when the portal is unwell every call costs the full
-# timeout, and then the cheap half ate the clock while the half that actually carries
-# open competitions was never read (the run of 20 Nov 08:00: both calls timed out, 91 s
-# spent, nothing read). The valuable stage now gets the first and longest chance.
-STAGES = ("tender", "planning")
+# records, the lot -- and the sieve throws away everything that is not an open opportunity.
+# A day of Find a Tender is 4 to 10 pages of 100 (the pond's own daily log, 12-20 November).
+# A feed takes ONE stage per call: a repeated or comma-joined `stages` keeps only the last.
+# Contracts Finder ONLY. Its `stages` filter is exact: measured on 10 and 19 November 2026,
+# the tender-tagged releases of a day read unfiltered and the releases the filter returns are
+# the same set, nothing lost, nothing extra -- and it saves reading ~110 releases a day to keep
+# ~12. Find a Tender's filter of the same name is NOT used; see FTS_NO_STAGES below.
+CF_STAGES = ("tender", "planning")
+
+# Find a Tender is read WITHOUT `stages`, and this is not a preference -- the filter is broken.
+# Measured 20 November 2026 on the day 10 November: the feed holds 407 notices that day, 83 of
+# them open (tender.status = active). `stages=tender` returned 8, and every one of the 8 carries
+# legalBasis 32014L0024 -- the old EU directive. All 71 open notices published under the
+# Procurement Act 2023 (legalBasis 2023/54) were missing, among them the one that gave this
+# away: "Electronic Committee Management System (ECMS)", Caerphilly, closing 11 December, which
+# the pond (which never filtered) had and the module never saw. Two independent developer
+# write-ups report the same fault. Since the Act commenced, 2023/54 is the overwhelming majority
+# of the feed -- 348 of those 407 -- so the filter hides most of it. The whole window is read and
+# the sieve decides, which is what the pond always did.
+FTS_NO_STAGES = True
+
+# Where the re-reading of Find a Tender starts, once, under the new cursor key. The module's
+# first ever run was 12 November 2026; everything it read up to 17 November it read with the
+# broken versions, and everything after that through the broken filter. This date is a day
+# before all of it, so the notices those runs lost come in by themselves -- ECMS among them.
+# A later version, once the catch-up is done, can drop this to a plain "a week back".
+FTS_READ_FROM = "2026-11-10T00:00:00Z"
+
+PAGE_LIMIT = 100            # the most either feed gives on one page (500 answers HTTP 400)
 
 # Tommos allows a run up to 200 s, and this module asks for all of it (Yuri, 20.11.2026:
 # "we are not in a hurry -- one or two runs a day can wait for the host to answer"). The
@@ -447,6 +467,34 @@ def _json(answer):
     return json.loads(answer.text(), strict=False)
 
 
+def _fetch_bounded(url, seconds):
+    """Fetch one page and give up after `seconds` of wall clock, whatever the socket is doing.
+
+    urllib's timeout bounds ONE read on the socket, not the whole answer, so a 1.3 MB page
+    that trickles in a few bytes at a time can outlive the run's budget -- and a run Tommos
+    kills returns neither records nor cursor, which is how the 17 November 08:00 run lost a
+    day. The fetch runs in a thread this function can abandon: the budget is kept whatever
+    the portal does.
+    """
+    out = {}
+
+    def go():
+        try:
+            out["answer"] = fetch(url, tries=1, timeout_s=max(1, int(seconds)))
+        except Exception as e:      # noqa: BLE001 -- handed back to the caller below
+            out["error"] = e
+
+    t = threading.Thread(target=go, daemon=True)
+    t.start()
+    t.join(seconds + 2)
+    if t.is_alive():
+        raise TimeoutError(f"the page did not arrive within {int(seconds)} s "
+                           f"(abandoned so the run keeps its budget)")
+    if "error" in out:
+        raise out["error"]
+    return out["answer"]
+
+
 def _why_in_words(why):
     """A page that did not arrive, said so a reader knows whether we were refused or ignored."""
     t = (why or "").lower()
@@ -464,24 +512,28 @@ def _why_in_words(why):
 def _pull(url, source, now_day, records, seen, deadline):
     """Page a feed from `url`, classify each release, append bids.
 
-    Returns (scanned, on_theme, complete). `complete` is False when the window was NOT
-    read to its end -- the feed errored, its answer could not be read, or the page cap
-    cut the paging short. The caller must then leave that source's cursor where it was,
-    so the unread window is read again next run instead of being skipped for good.
+    Returns (scanned, on_theme, complete, unread). `complete` is False when the window was
+    NOT read to its end -- the feed errored, its answer could not be read, the clock ran out
+    or the page cap cut the paging short. `unread` is then the link of the page we did not
+    get, so the next run carries on from there instead of reading the whole window again;
+    the caller keeps it in the cursor. Everything read before that page is already in
+    `records` and is kept -- a run never throws away what it earned.
     """
     scanned = on_theme = pages = 0
     complete = True
     stopped_early = False
+    unread = None               # the page we did not get to: the caller stores it and resumes
     while url and pages < MAX_PAGES:
         left = deadline - time.monotonic()
         if left < MIN_PAGE_S:
-            log.warning(f"{source}: the run's time ran out with more still to read; the window "
-                        f"stays open and will be read again next run")
+            log.warning(f"{source}: the run's time ran out with more still to read; the next run "
+                        f"carries on from this very page, not from the start of the window")
             complete = False
             stopped_early = True
+            unread = url
             break
         try:
-            answer = fetch(url, tries=1, timeout_s=max(1, int(min(PAGE_TIMEOUT_S, left))))
+            answer = _fetch_bounded(url, min(PAGE_TIMEOUT_S, left))
         except Exception as e:
             answer, why = None, f"{type(e).__name__}: {e}"[:140]
         if answer is None:
@@ -489,12 +541,14 @@ def _pull(url, source, now_day, records, seen, deadline):
                         f"read again next run")
             complete = False
             stopped_early = True
+            unread = url
             break
         if not answer.ok:
             log.warning(f"{source}: the feed answered {answer.status}; the window stays open "
                         f"and will be read again next run")
             complete = False
             stopped_early = True
+            unread = url
             break
         try:
             data = _json(answer)
@@ -503,6 +557,7 @@ def _pull(url, source, now_day, records, seen, deadline):
                         f"stays open and will be read again next run")
             complete = False
             stopped_early = True
+            unread = url
             break
         releases = data.get("releases") or []
         pages += 1
@@ -530,6 +585,7 @@ def _pull(url, source, now_day, records, seen, deadline):
             seen.add(row["ocid"])
         url = (data.get("links") or {}).get("next")
     if url and not stopped_early:
+        unread = url
         # Still a next page and nothing else stopped us: the cap cut the window short.
         # Until 2026-11-17 this spoke for EVERY early exit, so a feed that simply did not
         # answer was also reported as "stopped at the page cap" -- two alarms for one fault,
@@ -537,7 +593,7 @@ def _pull(url, source, now_day, records, seen, deadline):
         log.warning(f"{source}: stopped at the {MAX_PAGES}-page cap with more still to read; "
                     f"the window stays open and will be read again next run")
         complete = False
-    return scanned, on_theme, complete
+    return scanned, on_theme, complete, unread
 
 
 def find(context):
@@ -550,14 +606,21 @@ def find(context):
     fts_deadline = started + RUN_BUDGET_S * FTS_SHARE
     cf_deadline = started + RUN_BUDGET_S
 
-    # Find a Tender — incremental by last-updated time, one call per stage.
-    fts_from = cursor.get("fts") or _days_before(now, FIRST_RUN_DAYS)
+    # Find a Tender — the whole window, no stage filter, day by day, resumable page by page.
+    # The cursor key is new ("fts2"): the old one ("fts") stands at the days read through the
+    # broken filter, and those days have to be read again. FTS_READ_FROM is where that
+    # re-reading starts; it is deliberately a day earlier than this module's first ever run.
+    fts = dict(cursor.get("fts2") or {})
+    fts_from = fts.get("through") or FTS_READ_FROM
+    carried = fts.get("next")       # a page left half way through the first day, from last run
     fts_floor = _days_before(now, MAX_LOOKBACK_DAYS)
     if fts_from < fts_floor:
         log.warning(f"find-a-tender: the window had stood open since {fts_from[:10]}; reading only "
-                    f"from {fts_floor[:10]} (the {MAX_LOOKBACK_DAYS}-day cap). Updates between those "
-                    f"two dates are NOT read -- the feed was unreadable for that long")
+                    f"from {fts_floor[:10]} (the {MAX_LOOKBACK_DAYS}-day cap). Notices updated "
+                    f"between {fts_from[:10]} and {fts_floor[:10]} are NOT read by this module and "
+                    f"never will be -- say so to whoever watches this feed")
         fts_from = fts_floor
+        carried = None
     # Day by day, oldest first. A wide window is one huge page -- 12 days of Find a Tender is
     # 1.6 MB and 28 s on a good minute, and on a bad one (17 Nov: 502s and no answer at all) it
     # cannot be read at all, so the window stays open, grows, and the feed never recovers. Day
@@ -566,20 +629,33 @@ def find(context):
     fts_scanned = fts_theme = 0
     fts_through = fts_from
     fts_ok = True
+    fts_left = None                 # the page the next run starts from, if we stop part way
+    resumed = bool(carried)
+    from_page = carried             # the page THIS run began on, if it resumed one
     for a, b in _day_slices(fts_from, now):
-        day_ok = True
-        for stage in STAGES:
-            url = f"{FTS_API}?updatedFrom={a}&updatedTo={b}&stages={stage}"
-            scanned, theme, ok = _pull(url, "find-a-tender", now_day, records, seen, fts_deadline)
-            fts_scanned += scanned
-            fts_theme += theme
-            day_ok = day_ok and ok
-        if not day_ok:
+        url = carried or f"{FTS_API}?updatedFrom={a}&updatedTo={b}&limit={PAGE_LIMIT}"
+        carried = None              # only the first day of this run can be a resumed one
+        scanned, theme, ok, unread = _pull(url, "find-a-tender", now_day, records, seen,
+                                           fts_deadline)
+        fts_scanned += scanned
+        fts_theme += theme
+        if not ok:
             fts_ok = False
+            # Keep the page to carry on from -- unless it is the very page this run resumed
+            # on and it failed again. A link that cannot be read twice is not worth keeping:
+            # dropping it makes the next run read that day from its first page, which costs
+            # pages but can never strand a day behind a link the feed will not serve.
+            fts_left = None if (unread and unread == from_page) else unread
+            if from_page and fts_left is None:
+                log.warning("find-a-tender: the page carried over from the last run failed "
+                            "again, so it is dropped and this day is read afresh next run")
             break
         fts_through = b
-    log.read(f"Find a Tender, updated {fts_from[:10]}..{fts_through[:10]} ({fts_theme} on-theme"
-             f"{'' if fts_ok else f', READ INCOMPLETE -- got no further than {fts_through[:10]}'})",
+    log.read(f"Find a Tender, updated {fts_from[:10]}..{fts_through[:10]}"
+             f"{' (carried on from the page the last run stopped at)' if resumed else ''}"
+             f" ({fts_theme} on-theme"
+             f"{'' if fts_ok else f', READ INCOMPLETE -- read in full only up to {fts_through[:10]}'
+                                  f'{", and the next run carries on mid-day" if fts_left else ""}'})",
              fts_scanned)
 
     # Contracts Finder, read the same way, by published date. Its publishedTo is EXCLUSIVE
@@ -598,9 +674,11 @@ def find(context):
     day = cf_from
     while day <= now_day:
         day_ok = True
-        for stage in STAGES:
-            url = f"{CF_API}?publishedFrom={day}&publishedTo={_day_after(day)}&size=100&stages={stage}"
-            scanned, theme, ok = _pull(url, "contracts-finder", now_day, records, seen, cf_deadline)
+        for stage in CF_STAGES:
+            url = (f"{CF_API}?publishedFrom={day}&publishedTo={_day_after(day)}"
+                   f"&size={PAGE_LIMIT}&stages={stage}")
+            scanned, theme, ok, _ = _pull(url, "contracts-finder", now_day, records, seen,
+                                           cf_deadline)
             cf_scanned += scanned
             cf_theme += theme
             day_ok = day_ok and ok
@@ -619,8 +697,8 @@ def find(context):
     # read, which was safe but meant a feed having a bad week made no progress at all. Now each
     # day read in full is kept, and the day that failed is where tomorrow starts.
     moved = dict(cursor)
-    if fts_through > (cursor.get("fts") or ""):
-        moved["fts"] = fts_through
+    was = (cursor.get("fts2") or {}).get("through") or ""
+    moved["fts2"] = {"through": max(fts_through, was), "next": fts_left}
     if cf_through and cf_through > (cursor.get("cf") or ""):
         moved["cf"] = cf_through
     return {"records": records, "cursor": moved}

@@ -21,8 +21,8 @@
       ],
       "opp_type": "Open",
       "value_estimate": {
-        "low": 200000.0,
-        "high": 200000.0,
+        "low": 200000,
+        "high": 200000,
         "currency": "GBP"
       }
     },
@@ -47,7 +47,10 @@
     }
   ],
   "cursor": {
-    "fts": "2026-11-12T08:00:00Z",
+    "fts2": {
+      "through": "2026-11-12T08:00:00Z",
+      "next": null
+    },
     "cf": "2026-11-12"
   }
 }
