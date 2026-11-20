@@ -575,15 +575,20 @@ def _the_feed_is_answering(source, day, deadline):
 def _pull(url, source, now_day, records, seen, deadline, label=""):
     """Page a feed from `url`, classify each release, append bids.
 
-    Returns (scanned, on_theme, complete, unread). `complete` is False when the window was
+    Returns (scanned, on_theme, complete, unread, refused). `complete` is False when the window
+    was
     NOT read to its end -- the feed errored, its answer could not be read, the clock ran out
     or the page cap cut the paging short. `unread` is then the link of the page we did not
     get, so the next run carries on from there instead of reading the whole window again;
     the caller keeps it in the cursor. Everything read before that page is already in
-    `records` and is kept -- a run never throws away what it earned.
+    `records` and is kept -- a run never throws away what it earned. `refused` is True only when
+    the feed answered that THIS request is wrong (a 4xx that is not 429): then the link is no good
+    and asking it again is pointless. A timeout, a 429, an error of the feed's own or the run's
+    clock are all transient -- the link is still the right one and is kept.
     """
     scanned = on_theme = pages = 0
     complete = True
+    refused = False
     stopped_early = False
     unread = None               # the page we did not get to: the caller stores it and resumes
     while url and pages < MAX_PAGES:
@@ -610,6 +615,7 @@ def _pull(url, source, now_day, records, seen, deadline, label=""):
             log.warning(f"{source}{label}: the feed answered {answer.status}; the window stays open "
                         f"and will be read again next run")
             complete = False
+            refused = 400 <= answer.status < 500 and answer.status != 429
             stopped_early = True
             unread = url
             break
@@ -656,7 +662,7 @@ def _pull(url, source, now_day, records, seen, deadline, label=""):
         log.warning(f"{source}{label}: stopped at the {MAX_PAGES}-page cap with more still to read; "
                     f"the window stays open and will be read again next run")
         complete = False
-    return scanned, on_theme, complete, unread
+    return scanned, on_theme, complete, unread, refused
 
 
 def _read_fts_span(label, from_iso, to_iso, carried, now_day, records, seen, deadline):
@@ -673,16 +679,19 @@ def _read_fts_span(label, from_iso, to_iso, carried, now_day, records, seen, dea
     for a, b in _day_slices(from_iso, to_iso):
         url = carried or f"{FTS_API}?updatedFrom={a}&updatedTo={b}&limit={PAGE_LIMIT}"
         carried = None                  # only the first day of this run can be a resumed one
-        s, t, ok, unread = _pull(url, "find-a-tender", now_day, records, seen, deadline, label)
+        s, t, ok, unread, refused = _pull(url, "find-a-tender", now_day, records, seen,
+                                          deadline, label)
         scanned += s
         on_theme += t
         if not ok:
             complete = False
-            # Keep the page to carry on from -- unless it is the very page this run resumed
-            # on and it failed again. A link that cannot be read twice is not worth keeping:
-            # dropping it makes the next run read that day from its first page, which costs
-            # pages but can never strand a day behind a link the feed will not serve.
-            carry_on = None if (unread and unread == from_page) else unread
+            # Keep the page to carry on from -- unless the feed REFUSED this very page that
+            # this run resumed on. A link the feed will not serve would strand the day for good,
+            # so it is dropped and the day is read afresh. Everything else -- a timeout, a 429,
+            # an error of the feed's own -- is the portal having a bad minute, and the position
+            # inside the day is worth far more than it costs to keep: throwing it away on a
+            # timeout makes a slow hour restart a four-page day, which is how a backlog stalls.
+            carry_on = None if (unread and unread == from_page and refused) else unread
             if from_page and carry_on is None:
                 log.warning(f"find-a-tender{label}: the page carried over from the last run "
                             f"failed again, so it is dropped and this day is read afresh next run")
@@ -802,8 +811,8 @@ def find(context):
         for stage in CF_STAGES:
             url = (f"{CF_API}?publishedFrom={day}&publishedTo={_day_after(day)}"
                    f"&size={PAGE_LIMIT}&stages={stage}")
-            scanned, theme, ok, _ = _pull(url, "contracts-finder", now_day, records, seen,
-                                           cf_deadline)
+            scanned, theme, ok, _, _refused = _pull(url, "contracts-finder", now_day, records,
+                                                    seen, cf_deadline)
             cf_scanned += scanned
             day_scanned += scanned
             cf_theme += theme
